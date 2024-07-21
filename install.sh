@@ -345,7 +345,7 @@ main() {
   install_depend
   clear
   echo_content red "\n"
-  echo_content red "\n----------H-UI----------"
+  echo_content yellow "\n----------H-UI----------"
   echo_content red "\n"
   echo_content yellow "1. 安装 H UI (Docker)"
   echo_content yellow "2. 升级 H UI (Docker)"
