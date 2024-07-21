@@ -53,13 +53,13 @@ can_connect() {
 
 check_sys() {
   if [[ $(id -u) != "0" ]]; then
-    echo_content red "You must be root to run this script"
+    echo_content red "必须以root用户运行该脚本"
     exit 1
   fi
 
   can_connect www.google.com
   if [[ "$?" == "1" ]]; then
-    echo_content red "---> Network connection failed"
+    echo_content red "---> 网络连接失败"
     exit 1
   fi
 
@@ -74,7 +74,7 @@ check_sys() {
   fi
 
   if [[ -z "${package_manager}" ]]; then
-    echo_content red "This system is not currently supported"
+    echo_content red "目前不支持此系统"
     exit 1
   fi
 
@@ -94,30 +94,30 @@ check_sys() {
   case $release in
   centos)
     if [[ $major_version -ge 6 ]]; then
-      echo_content green "Supported CentOS version detected: $version"
+      echo_content green "检测到支持的CentOS版本: $version"
     else
-      echo_content red "Unsupported CentOS version: $version. Only supports CentOS 6+."
+      echo_content red "不受支持的CentOS版本: $version. 仅支持CentOS 6+."
       exit 1
     fi
     ;;
   ubuntu)
     if [[ $major_version -ge 16 ]]; then
-      echo_content green "Supported Ubuntu version detected: $version"
+      echo_content green "检测到支持的Ubuntu版本: $version"
     else
-      echo_content red "Unsupported Ubuntu version: $version. Only supports Ubuntu 16+."
+      echo_content red "不支持的Ubuntu版本：$version.仅支持Ubuntu 16+."
       exit 1
     fi
     ;;
   debian)
     if [[ $major_version -ge 8 ]]; then
-      echo_content green "Supported Debian version detected: $version"
+      echo_content green "检测到支持的Debian版本:$version"
     else
-      echo_content red "Unsupported Debian version: $version. Only supports Debian 8+."
+      echo_content red "不支持的Debian版本:$version.仅支持Debian 8+."
       exit 1
     fi
     ;;
   *)
-    echo_content red "Only supports CentOS 6+/Ubuntu 16+/Debian 8+"
+    echo_content red "仅支持CentOS 6+/Ubuntu 16+/Debian 8+"
     exit 1
     ;;
   esac
@@ -129,7 +129,7 @@ check_sys() {
   fi
 
   if [[ -z "${get_arch}" ]]; then
-    echo_content red "Only supports x86_64/amd64 arm64/aarch64"
+    echo_content red "仅支持 x86_64/amd64 arm64/aarch64"
     exit 1
   fi
 }
@@ -175,7 +175,7 @@ remove_forward(){
 
 install_docker() {
   if [[ ! $(command -v docker) ]]; then
-    echo_content green "---> Install Docker"
+    echo_content green "---> 安装Docker"
 
     bash <(curl -fsSL https://get.docker.com)
 
@@ -184,28 +184,28 @@ install_docker() {
     systemctl enable docker && systemctl restart docker
 
     if [[ $(command -v docker) ]]; then
-      echo_content skyBlue "---> Docker install successful"
+      echo_content skyBlue "---> Docker安装成功"
     else
-      echo_content red "---> Docker install failed"
+      echo_content red "---> Docker安装失败"
       exit 1
     fi
   else
-    echo_content skyBlue "---> Docker is already installed"
+    echo_content skyBlue "---> Docker已安装"
   fi
 }
 
 install_h_ui_docker() {
   if [[ -n $(docker ps -a -q -f "name=^h-ui$") ]]; then
-    echo_content skyBlue "---> H UI is already installed"
+    echo_content skyBlue "---> H-UI已安装"
     exit 0
   fi
 
-  echo_content green "---> Install H UI"
+  echo_content green "---> 安装H-UI"
   mkdir -p ${HUI_DATA_DOCKER}
 
-  read -r -p "Please enter the port of H UI (default: 8081): " h_ui_port
+  read -r -p "请输入H-UI的端口(默认:8081):" h_ui_port
   [[ -z "${h_ui_port}" ]] && h_ui_port="8081"
-  read -r -p "Please enter the Time zone of H UI (default: Asia/Shanghai): " h_ui_time_zone
+  read -r -p "请输入H-UI的时区(默认:Asia/Shanghai):" h_ui_time_zone
   [[ -z "${h_ui_time_zone}" ]] && h_ui_time_zone="Asia/Shanghai"
 
   docker pull jonssonyan/h-ui &&
@@ -219,63 +219,63 @@ install_h_ui_docker() {
       -v /h-ui/logs:/h-ui/logs \
       jonssonyan/h-ui \
       ./h-ui -p ${h_ui_port}
-  echo_content skyBlue "---> H UI install successful"
+  echo_content skyBlue "---> H-UI安装成功"
 }
 
 upgrade_h_ui_docker() {
   if [[ ! $(command -v docker) ]]; then
-    echo_content red "---> Docker not installed"
+    echo_content red "---> Docker未安装"
     exit 0
   fi
   if [[ -z $(docker ps -a -q -f "name=^h-ui$") ]]; then
-    echo_content red "---> H UI not installed"
+    echo_content red "---> H-UI未安装"
     exit 0
   fi
 
   latest_version=$(curl -Ls "https://api.github.com/repos/xxf185/h-ui/releases/latest" | grep '"tag_name":' | sed 's/.*"tag_name": "\(.*\)",.*/\1/')
   current_version=$(docker exec h-ui ./h-ui -v | sed -n 's/.*version \([^\ ]*\).*/\1/p')
   if [[ "${latest_version}" == "${current_version}" ]]; then
-    echo_content skyBlue "---> H UI is already the latest version"
+    echo_content skyBlue "---> H-UI已经是最新版本"
     exit 0
   fi
 
-  echo_content green "---> Upgrade H UI"
+  echo_content green "---> 升级H-UI"
   docker rm -f h-ui
   docker rmi jonssonyan/h-ui
   install_h_ui_docker
-  echo_content skyBlue "---> H UI upgrade successful"
+  echo_content skyBlue "---> H-UI升级成功"
 }
 
 uninstall_h_ui_docker() {
   if [[ ! $(command -v docker) ]]; then
-    echo_content red "---> Docker not installed"
+    echo_content red "---> Docker未安装"
     exit 0
   fi
   if [[ -z $(docker ps -a -q -f "name=^h-ui$") ]]; then
-    echo_content red "---> H UI not installed"
+    echo_content red "---> H-UI未安装"
     exit 0
   fi
 
-  echo_content green "---> Uninstall H UI"
+  echo_content green "---> 卸载H-UI"
   docker rm -f h-ui
   docker rmi jonssonyan/h-ui
   rm -rf /h-ui/
   remove_forward
-  echo_content skyBlue "---> H UI uninstall successful"
+  echo_content skyBlue "---> H-UI卸载成功"
 }
 
 install_h_ui_systemd() {
   if systemctl status h-ui &>/dev/null; then
-    echo_content skyBlue "---> H UI is already installed"
+    echo_content skyBlue "---> H-UI已安装"
     exit 0
   fi
 
-  echo_content green "---> Install H UI"
+  echo_content green "---> 安装H-UI"
   mkdir -p ${HUI_DATA_SYSTEMD}
 
-  read -r -p "Please enter the port of H UI (default: 8081): " h_ui_port
+  read -r -p "请输入H-UI端口(默认:8081): " h_ui_port
   [[ -z "${h_ui_port}" ]] && h_ui_port="8081"
-  read -r -p "Please enter the Time zone of H UI (default: Asia/Shanghai): " h_ui_time_zone
+  read -r -p "请输入H-UI的时区(默认:Asia/Shanghai): " h_ui_time_zone
   [[ -z "${h_ui_time_zone}" ]] && h_ui_time_zone="Asia/Shanghai"
 
   timedatectl set-timezone ${h_ui_time_zone} && timedatectl set-local-rtc 0
@@ -294,39 +294,39 @@ install_h_ui_systemd() {
     systemctl daemon-reload &&
     systemctl enable h-ui &&
     systemctl restart h-ui
-  echo_content skyBlue "---> H UI 安装成功"
+  echo_content skyBlue "---> H-UI安装成功"
 }
 
 upgrade_h_ui_systemd() {
   if ! systemctl status h-ui &>/dev/null; then
-    echo_content red "---> H UI 未安装"
+    echo_content red "---> H-UI未安装"
     exit 0
   fi
 
   latest_version=$(curl -Ls "https://api.github.com/repos/xxf185/h-ui/releases/latest" | grep '"tag_name":' | sed 's/.*"tag_name": "\(.*\)",.*/\1/')
   current_version=$(/usr/local/h-ui/h-ui -v | sed -n 's/.*version \([^\ ]*\).*/\1/p')
   if [[ "${latest_version}" == "${current_version}" ]]; then
-    echo_content skyBlue "---> H UI 已是最新版本"
+    echo_content skyBlue "---> H-UI已是最新版本"
     exit 0
   fi
 
-  echo_content green "---> 升级 H UI"
+  echo_content green "---> 升级H-UI"
   if [[ $(systemctl is-active h-ui) == "active" ]]; then
     systemctl stop h-ui
   fi
   curl -fsSL https://github.com/xxf185/h-ui/releases/latest/download/h-ui-linux-${get_arch} -o /usr/local/h-ui/h-ui &&
     chmod +x /usr/local/h-ui/h-ui &&
     systemctl restart h-ui
-  echo_content skyBlue "---> H UI 升级成功"
+  echo_content skyBlue "---> H-UI升级成功"
 }
 
 uninstall_h_ui_systemd() {
   if ! systemctl status h-ui &>/dev/null; then
-    echo_content red "---> H UI 未安装"
+    echo_content red "---> H-UI未安装"
     exit 0
   fi
 
-  echo_content green "---> 卸载 H UI"
+  echo_content green "---> 卸载H-UI"
   if [[ $(systemctl is-active h-ui) == "active" ]]; then
     systemctl stop h-ui
   fi
@@ -335,7 +335,7 @@ uninstall_h_ui_systemd() {
     systemctl daemon-reload &&
     rm -rf /usr/local/h-ui/
   remove_forward
-  echo_content skyBlue "---> H UI 卸载完成"
+  echo_content skyBlue "---> H-UI卸载完成"
 }
 
 main() {
@@ -347,12 +347,12 @@ main() {
   echo_content red "\n"
   echo_content yellow "\n----------H-UI----------"
   echo_content red "\n"
-  echo_content yellow "1. 安装 H UI (Docker)"
-  echo_content yellow "2. 升级 H UI (Docker)"
-  echo_content yellow "3. 卸载 H UI (Docker)"
-  echo_content yellow "4. 安装 H UI (systemd)"
-  echo_content yellow "5. 升级 H UI (systemd)"
-  echo_content yellow "6. 卸载 H UI (systemd)"
+  echo_content yellow "1. 安装H-UI(Docker)"
+  echo_content yellow "2. 升级H-UI(Docker)"
+  echo_content yellow "3. 卸载H-UI(Docker)"
+  echo_content yellow "4. 安装H-UI(systemd)"
+  echo_content yellow "5. 升级H-UI(systemd)"
+  echo_content yellow "6. 卸载H-UI(systemd)"
   read -r -p "选项: " input_option
   case ${input_option} in
   1)
