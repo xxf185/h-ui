@@ -344,16 +344,12 @@ main() {
   check_sys
   install_depend
   clear
-  echo_content red "\n=============================================================="
-  echo_content skyBlue "Recommended OS: CentOS 8+/Ubuntu 20+/Debian 11+"
-  echo_content skyBlue "Description: Quick Installation of H UI"
-  echo_content skyBlue "Author: jonssonyan <https://jonssonyan.com>"
-  echo_content skyBlue "Github: https://github.com/jonssonyan/h-ui"
-  echo_content red "\n=============================================================="
+  echo_content red "\n"
+  echo_content red "\n----------H-UI----------"
+  echo_content red "\n"
   echo_content yellow "1. 安装 H UI (Docker)"
   echo_content yellow "2. 升级 H UI (Docker)"
   echo_content yellow "3. 卸载 H UI (Docker)"
-  echo_content red "\n=============================================================="
   echo_content yellow "4. 安装 H UI (systemd)"
   echo_content yellow "5. 升级 H UI (systemd)"
   echo_content yellow "6. 卸载 H UI (systemd)"
