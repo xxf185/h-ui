@@ -232,7 +232,7 @@ upgrade_h_ui_docker() {
     exit 0
   fi
 
-  latest_version=$(curl -Ls "https://api.github.com/repos/jonssonyan/h-ui/releases/latest" | grep '"tag_name":' | sed 's/.*"tag_name": "\(.*\)",.*/\1/')
+  latest_version=$(curl -Ls "https://api.github.com/repos/xxf185/h-ui/releases/latest" | grep '"tag_name":' | sed 's/.*"tag_name": "\(.*\)",.*/\1/')
   current_version=$(docker exec h-ui ./h-ui -v | sed -n 's/.*version \([^\ ]*\).*/\1/p')
   if [[ "${latest_version}" == "${current_version}" ]]; then
     echo_content skyBlue "---> H UI is already the latest version"
@@ -314,7 +314,7 @@ upgrade_h_ui_systemd() {
   if [[ $(systemctl is-active h-ui) == "active" ]]; then
     systemctl stop h-ui
   fi
-  curl -fsSL https://github.com/jonssonyan/h-ui/releases/latest/download/h-ui-linux-${get_arch} -o /usr/local/h-ui/h-ui &&
+  curl -fsSL https://github.com/xxf185/h-ui/releases/latest/download/h-ui-linux-${get_arch} -o /usr/local/h-ui/h-ui &&
     chmod +x /usr/local/h-ui/h-ui &&
     systemctl restart h-ui
   echo_content skyBlue "---> H UI 升级成功"
