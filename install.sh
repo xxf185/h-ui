@@ -94,17 +94,17 @@ check_sys() {
   case $release in
   centos)
     if [[ $major_version -ge 6 ]]; then
-      echo_content green "检测到支持的CentOS版本: $version"
+      echo_content green "检测到支持的CentOS版本:$version"
     else
-      echo_content red "不受支持的CentOS版本: $version. 仅支持CentOS 6+."
+      echo_content red "不受支持的CentOS版本:$version. 仅支持CentOS 6+."
       exit 1
     fi
     ;;
   ubuntu)
     if [[ $major_version -ge 16 ]]; then
-      echo_content green "检测到支持的Ubuntu版本: $version"
+      echo_content green "检测到支持的Ubuntu版本:$version"
     else
-      echo_content red "不支持的Ubuntu版本：$version.仅支持Ubuntu 16+."
+      echo_content red "不支持的Ubuntu版本:$version.仅支持Ubuntu 16+."
       exit 1
     fi
     ;;
