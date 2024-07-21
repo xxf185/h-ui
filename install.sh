@@ -353,6 +353,7 @@ main() {
   echo_content yellow "4. 安装H-UI(systemd)"
   echo_content yellow "5. 升级H-UI(systemd)"
   echo_content yellow "6. 卸载H-UI(systemd)"
+  echo_content red "\n"
   read -r -p "选项: " input_option
   case ${input_option} in
   1)
