@@ -453,11 +453,9 @@ main() {
   echo_content yellow "1. 安装 H UI (systemd)"
   echo_content yellow "2. 升级 H UI (systemd)"
   echo_content yellow "3. 卸载 H UI (systemd)"
-  echo_content red "\n=============================================================="
   echo_content yellow "4. 安装 H UI (Docker)"
   echo_content yellow "5. 升级 H UI (Docker)"
   echo_content yellow "6. 卸载 H UI (Docker)"
-  echo_content red "\n=============================================================="
   echo_content yellow "7. SSH 本地端口转发（重启服务器后失败）"
   echo_content yellow "8. 重置系统管理员用户名和密码"
   read -r -p "请选择: " input_option
