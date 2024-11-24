@@ -252,40 +252,40 @@ install_h_ui_docker() {
     xxf185/h-ui"${hui_docker_version}" \
     ./h-ui -p ${h_ui_port}
   sleep 3
-  echo_content yellow "h-ui Panel Port: ${h_ui_port}"
+  echo_content yellow "h-ui面板端口: ${h_ui_port}"
   if version_ge "$(docker exec h-ui ./h-ui -v | sed -n 's/.*version \([^\ ]*\).*/\1/p')" "v0.0.12"; then
     echo_content yellow "$(docker exec h-ui ./h-ui reset)"
   else
-    echo_content yellow "h-ui Login Username: sysadmin"
-    echo_content yellow "h-ui Login Password: sysadmin"
+    echo_content yellow "h-ui 登录用户名: sysadmin"
+    echo_content yellow "h-ui 登录密码: sysadmin"
   fi
-  echo_content skyBlue "---> H UI install successful"
+  echo_content skyBlue "---> H UI 安装成功"
 }
 
 upgrade_h_ui_docker() {
   if [[ ! $(command -v docker) ]]; then
-    echo_content red "---> Docker not installed"
+    echo_content red "---> 未安装 Docker"
     exit 0
   fi
   if [[ -z $(docker ps -a -q -f "name=^h-ui$") ]]; then
-    echo_content red "---> H UI not installed"
+    echo_content red "---> 未安装 H UI"
     exit 0
   fi
 
   latest_version=$(curl -Ls "https://api.github.com/repos/xxf185/h-ui/releases/latest" | grep '"tag_name":' | sed 's/.*"tag_name": "\(.*\)",.*/\1/')
   current_version=$(docker exec h-ui ./h-ui -v | sed -n 's/.*version \([^\ ]*\).*/\1/p')
   if [[ "${latest_version}" == "${current_version}" ]]; then
-    echo_content skyBlue "---> H UI is already the latest version"
+    echo_content skyBlue "---> H UI已是最新版本"
     exit 0
   fi
 
-  echo_content green "---> Upgrade H UI"
+  echo_content green "---> 升级 H UI"
   docker rm -f h-ui
   docker rmi xxf185/h-ui
 
-  read -r -p "Please enter the port of H UI (default: 8081): " h_ui_port
+  read -r -p "请输入H UI的端口 (默认: 8081): " h_ui_port
   [[ -z "${h_ui_port}" ]] && h_ui_port="8081"
-  read -r -p "Please enter the Time zone of H UI (default: Asia/Shanghai): " h_ui_time_zone
+  read -r -p "请输入H UI的时区 (默认: Asia/Shanghai): " h_ui_time_zone
   [[ -z "${h_ui_time_zone}" ]] && h_ui_time_zone="Asia/Shanghai"
 
   docker run -d --cap-add=NET_ADMIN \
@@ -298,43 +298,43 @@ upgrade_h_ui_docker() {
     -v /h-ui/logs:/h-ui/logs \
     xxf185/h-ui \
     ./h-ui -p ${h_ui_port}
-  echo_content skyBlue "---> H UI upgrade successful"
+  echo_content skyBlue "---> H UI 升级成功"
 }
 
 uninstall_h_ui_docker() {
   if [[ ! $(command -v docker) ]]; then
-    echo_content red "---> Docker not installed"
+    echo_content red "---> 未安装 Docker"
     exit 0
   fi
   if [[ -z $(docker ps -a -q -f "name=^h-ui$") ]]; then
-    echo_content red "---> H UI not installed"
+    echo_content red "---> 未安装 H UI"
     exit 0
   fi
 
-  echo_content green "---> Uninstall H UI"
+  echo_content green "---> 卸载H UI"
   docker rm -f h-ui
   docker images xxf185/h-ui -q | xargs -r docker rmi -f
   rm -rf /h-ui/
   remove_forward
-  echo_content skyBlue "---> H UI uninstall successful"
+  echo_content skyBlue "---> H UI 卸载成功"
 }
 
 install_h_ui_systemd() {
   if systemctl status h-ui >/dev/null 2>&1; then
-    echo_content skyBlue "---> H UI is already installed"
+    echo_content skyBlue "---> H UI 已安装"
     exit 0
   fi
 
-  echo_content green "---> Install H UI"
+  echo_content green "---> 安装 H UI"
   mkdir -p ${HUI_DATA_SYSTEMD} &&
     export HUI_DATA="${HUI_DATA_SYSTEMD}"
 
   sed -i '/^HUI_DATA=/d' /etc/environment &&
     echo "HUI_DATA=${HUI_DATA_SYSTEMD}" | tee -a /etc/environment >/dev/null
 
-  read -r -p "Please enter the port of H UI (default: 8081): " h_ui_port
+  read -r -p "请输入H UI的端口 (默认: 8081): " h_ui_port
   [[ -z "${h_ui_port}" ]] && h_ui_port="8081"
-  read -r -p "Please enter the Time zone of H UI (default: Asia/Shanghai): " h_ui_time_zone
+  read -r -p "请输入H UI的时区 (默认: Asia/Shanghai): " h_ui_time_zone
   [[ -z "${h_ui_time_zone}" ]] && h_ui_time_zone="Asia/Shanghai"
 
   timedatectl set-timezone ${h_ui_time_zone} && timedatectl set-local-rtc 0
@@ -360,46 +360,46 @@ install_h_ui_systemd() {
     systemctl enable h-ui &&
     systemctl restart h-ui
   sleep 3
-  echo_content yellow "h-ui Panel Port: ${h_ui_port}"
+  echo_content yellow "h-ui面板端口: ${h_ui_port}"
   if version_ge "$(/usr/local/h-ui/h-ui -v | sed -n 's/.*version \([^\ ]*\).*/\1/p')" "v0.0.12"; then
     echo_content yellow "$(${HUI_DATA_SYSTEMD}h-ui reset)"
   else
-    echo_content yellow "h-ui Login Username: sysadmin"
-    echo_content yellow "h-ui Login Password: sysadmin"
+    echo_content yellow "h-ui 登录用户名: sysadmin"
+    echo_content yellow "h-ui 登录密码: sysadmin"
   fi
-  echo_content skyBlue "---> H UI install successful"
+  echo_content skyBlue "---> H UI 安装成功"
 }
 
 upgrade_h_ui_systemd() {
   if ! systemctl list-units --type=service --all | grep -q 'h-ui.service'; then
-    echo_content red "---> H UI not installed"
+    echo_content red "---> 未安装 H UI"
     exit 0
   fi
 
   latest_version=$(curl -Ls "https://api.github.com/repos/xxf185/h-ui/releases/latest" | grep '"tag_name":' | sed 's/.*"tag_name": "\(.*\)",.*/\1/')
   current_version=$(/usr/local/h-ui/h-ui -v | sed -n 's/.*version \([^\ ]*\).*/\1/p')
   if [[ "${latest_version}" == "${current_version}" ]]; then
-    echo_content skyBlue "---> H UI is already the latest version"
+    echo_content skyBlue "---> H UI已是最新版本"
     exit 0
   fi
 
-  echo_content green "---> Upgrade H UI"
+  echo_content green "---> 升级H UI"
   if [[ $(systemctl is-active h-ui) == "active" ]]; then
     systemctl stop h-ui
   fi
   curl -fsSL https://github.com/xxf185/h-ui/releases/latest/download/h-ui-linux-${get_arch} -o /usr/local/h-ui/h-ui &&
     chmod +x /usr/local/h-ui/h-ui &&
     systemctl restart h-ui
-  echo_content skyBlue "---> H UI upgrade successful"
+  echo_content skyBlue "---> H UI 升级成功"
 }
 
 uninstall_h_ui_systemd() {
   if ! systemctl list-units --type=service --all | grep -q 'h-ui.service'; then
-    echo_content red "---> H UI not installed"
+    echo_content red "---> 未安装 H UI"
     exit 0
   fi
 
-  echo_content green "---> Uninstall H UI"
+  echo_content green "---> 卸载H UI"
   if [[ $(systemctl is-active h-ui) == "active" ]]; then
     systemctl stop h-ui
   fi
@@ -409,35 +409,35 @@ uninstall_h_ui_systemd() {
     rm -rf /usr/local/h-ui/ &&
     systemctl reset-failed
   remove_forward
-  echo_content skyBlue "---> H UI uninstall successful"
+  echo_content skyBlue "---> H UI 卸载成功"
 }
 
 ssh_local_port_forwarding() {
-  read -r -p "Please enter the port of SSH local forwarding (default: 8082): " ssh_local_forwarded_port
+  read -r -p "请输入SSH本地转发的端口 (默认: 8082): " ssh_local_forwarded_port
   [[ -z "${ssh_local_forwarded_port}" ]] && ssh_local_forwarded_port="8082"
-  read -r -p "Please enter the port of H UI (default: 8081): " h_ui_port
+  read -r -p "请输入H UI的端口 (默认: 8081): " h_ui_port
   [[ -z "${h_ui_port}" ]] && h_ui_port="8081"
   ssh -N -f -L 0.0.0.0:${ssh_local_forwarded_port}:localhost:${h_ui_port} localhost
-  echo_content skyBlue "---> SSH local port forwarding successful"
+  echo_content skyBlue "---> SSH 本地端口转发成功"
 }
 
 reset_sysadmin() {
   if systemctl list-units --type=service --all | grep -q 'h-ui.service'; then
     if ! version_ge "$(/usr/local/h-ui/h-ui -v | sed -n 's/.*version \([^\ ]*\).*/\1/p')" "v0.0.12"; then
-      echo_content red "---> H UI (systemd) version must be greater than or equal to v0.0.12"
+      echo_content red "---> H UI (systemd) 版本必须大于或等于 v0.0.12"
       exit 0
     fi
     export HUI_DATA="${HUI_DATA_SYSTEMD}"
     echo_content yellow "$(${HUI_DATA_SYSTEMD}h-ui reset)"
-    echo_content skyBlue "---> H UI (systemd) reset sysadmin username and password successful"
+    echo_content skyBlue "---> H UI（systemd）重置系统管理员用户名和密码成功"
   fi
   if [[ $(command -v docker) && -n $(docker ps -a -q -f "name=^h-ui$") ]]; then
     if ! version_ge "$(docker exec h-ui ./h-ui -v | sed -n 's/.*version \([^\ ]*\).*/\1/p')" "v0.0.12"; then
-      echo_content red "---> H UI (Docker) version must be greater than or equal to v0.0.12"
+      echo_content red "---> H UI (Docker) 版本必须大于或等于 v0.0.12"
       exit 0
     fi
     echo_content yellow "$(docker exec h-ui ./h-ui reset)"
-    echo_content skyBlue "---> H UI (Docker) reset sysadmin username and password successful"
+    echo_content skyBlue "---> H UI（Docker）重置系统管理员用户名和密码成功"
   fi
 }
 
@@ -447,23 +447,20 @@ main() {
   check_sys
   install_depend
   clear
+  echo_content red ""
+  echo_content yellow "\n=================== H UI =========================="
+  echo_content red ""
+  echo_content yellow "1. 安装 H UI (systemd)"
+  echo_content yellow "2. 升级 H UI (systemd)"
+  echo_content yellow "3. 卸载 H UI (systemd)"
   echo_content red "\n=============================================================="
-  echo_content skyBlue "Recommended OS: CentOS 8+/Ubuntu 20+/Debian 11+"
-  echo_content skyBlue "Description: Quick Installation of H UI"
-  echo_content skyBlue "Author: xxf185 <https://xxf185.com>"
-  echo_content skyBlue "Github: https://github.com/xxf185/h-ui"
+  echo_content yellow "4. 安装 H UI (Docker)"
+  echo_content yellow "5. 升级 H UI (Docker)"
+  echo_content yellow "6. 卸载 H UI (Docker)"
   echo_content red "\n=============================================================="
-  echo_content yellow "1. Install H UI (systemd)"
-  echo_content yellow "2. Upgrade H UI (systemd)"
-  echo_content yellow "3. Uninstall H UI (systemd)"
-  echo_content red "\n=============================================================="
-  echo_content yellow "4. Install H UI (Docker)"
-  echo_content yellow "5. Upgrade H UI (Docker)"
-  echo_content yellow "6. Uninstall H UI (Docker)"
-  echo_content red "\n=============================================================="
-  echo_content yellow "7. SSH local port forwarding (Failed after restarting the server)"
-  echo_content yellow "8. Reset sysadmin username and password"
-  read -r -p "Please choose: " input_option
+  echo_content yellow "7. SSH 本地端口转发（重启服务器后失败）"
+  echo_content yellow "8. 重置系统管理员用户名和密码"
+  read -r -p "请选择: " input_option
   case ${input_option} in
   1)
     install_h_ui_systemd
@@ -491,7 +488,7 @@ main() {
     reset_sysadmin
     ;;
   *)
-    echo_content red "No such option"
+    echo_content red "没有这样的选项"
     ;;
   esac
 }
