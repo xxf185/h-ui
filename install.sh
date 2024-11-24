@@ -82,13 +82,13 @@ version_ge() {
 
 check_sys() {
   if [[ $(id -u) != "0" ]]; then
-    echo_content red "You must be root to run this script"
+    echo_content red "您必须以 root 身份运行该脚本"
     exit 1
   fi
 
   can_connect www.google.com
   if [[ "$?" == "1" ]]; then
-    echo_content red "---> Network connection failed"
+    echo_content red "---> 网络连接失败"
     exit 1
   fi
 
@@ -103,7 +103,7 @@ check_sys() {
   fi
 
   if [[ -z "${package_manager}" ]]; then
-    echo_content red "This system is not currently supported"
+    echo_content red "目前不支持此系统"
     exit 1
   fi
 
@@ -127,30 +127,30 @@ check_sys() {
   case $release in
   centos)
     if [[ $major_version -ge 6 ]]; then
-      echo_content green "Supported CentOS version detected: $version"
+      echo_content green "检测到支持的 CentOS 版本: $version"
     else
-      echo_content red "Unsupported CentOS version: $version. Only supports CentOS 6+."
+      echo_content red "不受支持的 CentOS 版本: $version. 仅支持 CentOS 6+."
       exit 1
     fi
     ;;
   ubuntu)
     if [[ $major_version -ge 16 ]]; then
-      echo_content green "Supported Ubuntu version detected: $version"
+      echo_content green "检测到支持的 Ubuntu 版本: $version"
     else
-      echo_content red "Unsupported Ubuntu version: $version. Only supports Ubuntu 16+."
+      echo_content red "不受支持的 Ubuntu 版本: $version. 仅支持 Ubuntu 16+."
       exit 1
     fi
     ;;
   debian)
     if [[ $major_version -ge 8 ]]; then
-      echo_content green "Supported Debian version detected: $version"
+      echo_content green "检测到支持的 Debian 版本: $version"
     else
-      echo_content red "Unsupported Debian version: $version. Only supports Debian 8+."
+      echo_content red "不受支持的 Debian 版本: $version. 仅支持 Debian 8+."
       exit 1
     fi
     ;;
   *)
-    echo_content red "Only supports CentOS 6+/Ubuntu 16+/Debian 8+"
+    echo_content red "仅支持 CentOS 6+/Ubuntu 16+/Debian 8+"
     exit 1
     ;;
   esac
@@ -162,7 +162,7 @@ check_sys() {
   fi
 
   if [[ -z "${get_arch}" ]]; then
-    echo_content red "Only supports x86_64/amd64 arm64/aarch64"
+    echo_content red "仅支持 x86_64/amd64 arm64/aarch64"
     exit 1
   fi
 }
@@ -208,7 +208,7 @@ remove_forward() {
 
 install_docker() {
   if [[ ! $(command -v docker) ]]; then
-    echo_content green "---> Install Docker"
+    echo_content green "---> 安装 Docker"
 
     bash <(curl -fsSL https://get.docker.com)
 
@@ -217,28 +217,28 @@ install_docker() {
     systemctl enable docker && systemctl restart docker
 
     if [[ $(command -v docker) ]]; then
-      echo_content skyBlue "---> Docker install successful"
+      echo_content skyBlue "---> Docker 安装成功"
     else
-      echo_content red "---> Docker install failed"
+      echo_content red "---> Docker 安装失败"
       exit 1
     fi
   else
-    echo_content skyBlue "---> Docker is already installed"
+    echo_content skyBlue "---> Docker 已安装"
   fi
 }
 
 install_h_ui_docker() {
   if [[ -n $(docker ps -a -q -f "name=^h-ui$") ]]; then
-    echo_content skyBlue "---> H UI is already installed"
+    echo_content skyBlue "---> H UI 已安装"
     exit 0
   fi
 
-  echo_content green "---> Install H UI"
+  echo_content green "---> 安装 H UI"
   mkdir -p ${HUI_DATA_DOCKER}
 
-  read -r -p "Please enter the port of H UI (default: 8081): " h_ui_port
+  read -r -p "请输入H UI的端口 (默认: 8081): " h_ui_port
   [[ -z "${h_ui_port}" ]] && h_ui_port="8081"
-  read -r -p "Please enter the Time zone of H UI (default: Asia/Shanghai): " h_ui_time_zone
+  read -r -p "请输入H UI的时区 (默认: Asia/Shanghai): " h_ui_time_zone
   [[ -z "${h_ui_time_zone}" ]] && h_ui_time_zone="Asia/Shanghai"
 
   docker run -d --cap-add=NET_ADMIN \
