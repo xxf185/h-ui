@@ -191,11 +191,11 @@ install_depend() {
 select_language() {
   clear
   echo_content red ""
-  echo_content skyBlue "Please select language"
-  echo_content yellow "1. English (Default)"
+  echo_content skyBlue "请选择语言"
+  echo_content yellow "1. English (默认)"
   echo_content yellow "2. 简体中文"
   echo_content red ""
-  read -r -p "Please choose: " input_option
+  read -r -p "请选择: " input_option
   case ${input_option} in
   2)
     translation_file="zh_cn.json"
@@ -498,7 +498,7 @@ main() {
   echo_content yellow "7. $(get_translation ".menu.ssh_local_port_forwarding")"
   echo_content yellow "8. $(get_translation ".menu.reset_sysadmin")"
   echo_content red ""
-  read -r -p "Please choose: " input_option
+  read -r -p "请选择: " input_option
   case ${input_option} in
   1)
     install_h_ui_systemd
