@@ -395,7 +395,7 @@ install_h_ui_systemd() {
     systemctl enable h-ui &&
     systemctl restart h-ui
   sleep 3
-  echo_content yellow "h-ui Access URL: http://:<your-server-ip>:${h_ui_port}"
+  echo_content yellow "h-ui Access URL: http://<your-server-ip>:${h_ui_port}"
   if version_ge "$(/usr/local/h-ui/h-ui -v | sed -n 's/.*version \([^\ ]*\).*/\1/p')" "v0.0.12"; then
     echo_content yellow "$(${HUI_DATA_SYSTEMD}h-ui reset)"
   else
